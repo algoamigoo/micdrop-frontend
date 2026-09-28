@@ -17,7 +17,7 @@ export function PromptSortTabs({
     <div
       role="tablist"
       aria-label="Sort prompts"
-      className="inline-flex rounded-lg border border-border bg-card p-1"
+      className="border-border bg-card inline-flex rounded-lg border p-1"
     >
       {TABS.map((t) => {
         const active = t.value === value;

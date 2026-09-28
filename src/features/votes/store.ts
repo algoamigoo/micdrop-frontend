@@ -28,20 +28,11 @@ function makeKey(userId: string, kind: VoteKind, id: number) {
   return `${userId}:${kind}:${id}`;
 }
 
-export function getLocalVote(
-  userId: string,
-  kind: VoteKind,
-  id: number,
-): LocalVote | null {
+export function getLocalVote(userId: string, kind: VoteKind, id: number): LocalVote | null {
   return loadMap()[makeKey(userId, kind, id)] ?? null;
 }
 
-export function setLocalVote(
-  userId: string,
-  kind: VoteKind,
-  id: number,
-  vote: LocalVote,
-) {
+export function setLocalVote(userId: string, kind: VoteKind, id: number, vote: LocalVote) {
   const map = loadMap();
   const key = makeKey(userId, kind, id);
   if (map[key] === vote) return;

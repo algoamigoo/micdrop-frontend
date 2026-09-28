@@ -1,11 +1,5 @@
 import { useCallback, useSyncExternalStore } from "react";
-import {
-  getLocalVote,
-  setLocalVote,
-  subscribeVotes,
-  type LocalVote,
-  type VoteKind,
-} from "./store";
+import { getLocalVote, setLocalVote, subscribeVotes, type LocalVote, type VoteKind } from "./store";
 
 export type { LocalVote, VoteKind };
 

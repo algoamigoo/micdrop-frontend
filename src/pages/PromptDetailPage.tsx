@@ -15,7 +15,6 @@ import { ResponseSkeleton } from "@/components/response/ResponseSkeleton";
 import { usePrompt } from "@/features/prompts/queries";
 import { useResponses } from "@/features/responses/queries";
 import { useCreateResponse } from "@/features/responses/mutations";
-import { useIdentity } from "@/features/identity/useIdentity";
 import { PAGE_SIZE } from "@/lib/constants";
 import { absoluteTime, formatCount, timeAgo } from "@/lib/format";
 import { isNotFound } from "@/api/errors";
@@ -24,14 +23,13 @@ export default function PromptDetailPage() {
   const { postId: postIdParam } = useParams<{ postId: string }>();
   const postId = postIdParam ? Number(postIdParam) : NaN;
 
-  const { userId } = useIdentity();
   const [limit, setLimit] = useState<number>(PAGE_SIZE.responses);
 
   const promptQuery = usePrompt(Number.isFinite(postId) ? postId : undefined);
-  const responsesQuery = useResponses(
-    Number.isFinite(postId) ? postId : undefined,
-    { limit, offset: 0 },
-  );
+  const responsesQuery = useResponses(Number.isFinite(postId) ? postId : undefined, {
+    limit,
+    offset: 0,
+  });
   const createResponse = useCreateResponse(postId);
 
   const responses = responsesQuery.data ?? [];
@@ -51,10 +49,10 @@ export default function PromptDetailPage() {
     return (
       <Container size="md">
         <BackLink />
-        <div className="mt-4 rounded-lg border border-border bg-card p-5">
-          <div className="h-5 w-40 animate-pulse rounded bg-muted" />
-          <div className="mt-4 h-6 w-3/4 animate-pulse rounded bg-muted" />
-          <div className="mt-2 h-6 w-1/2 animate-pulse rounded bg-muted" />
+        <div className="border-border bg-card mt-4 rounded-lg border p-5">
+          <div className="bg-muted h-5 w-40 animate-pulse rounded" />
+          <div className="bg-muted mt-4 h-6 w-3/4 animate-pulse rounded" />
+          <div className="bg-muted mt-2 h-6 w-1/2 animate-pulse rounded" />
         </div>
       </Container>
     );
@@ -84,7 +82,7 @@ export default function PromptDetailPage() {
       <BackLink />
 
       {/* Prompt header */}
-      <article className="mt-4 rounded-lg border border-border bg-card p-5">
+      <article className="border-border bg-card mt-4 rounded-lg border p-5">
         <div className="flex gap-4">
           <div className="pt-1">
             <VoteControl
@@ -95,15 +93,15 @@ export default function PromptDetailPage() {
             />
           </div>
           <div className="min-w-0 flex-1">
-            <div className="mb-2 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+            <div className="text-muted-foreground mb-2 flex flex-wrap items-center gap-2 text-xs">
               <Avatar userId={prompt.user_id} size={18} />
-              <span className="font-medium text-foreground">u/{prompt.user_id}</span>
+              <span className="text-foreground font-medium">u/{prompt.user_id}</span>
               <span aria-hidden>·</span>
               <time dateTime={prompt.created_at} title={absoluteTime(prompt.created_at)}>
                 {timeAgo(prompt.created_at)}
               </time>
             </div>
-            <h1 className="text-xl font-semibold leading-snug text-foreground sm:text-2xl">
+            <h1 className="text-foreground text-xl leading-snug font-semibold sm:text-2xl">
               {prompt.body}
             </h1>
             <div className="mt-3">
@@ -122,10 +120,7 @@ export default function PromptDetailPage() {
         <ResponseForm
           submitting={createResponse.isPending}
           onSubmit={(body, reset) => {
-            createResponse.mutate(
-              { user_id: userId, body },
-              { onSuccess: () => reset() },
-            );
+            createResponse.mutate({ body }, { onSuccess: () => reset() });
           }}
         />
       </div>
@@ -135,10 +130,7 @@ export default function PromptDetailPage() {
         {responsesQuery.isPending ? (
           Array.from({ length: 3 }).map((_, i) => <ResponseSkeleton key={i} />)
         ) : responsesQuery.isError ? (
-          <ErrorState
-            error={responsesQuery.error}
-            onRetry={() => responsesQuery.refetch()}
-          />
+          <ErrorState error={responsesQuery.error} onRetry={() => responsesQuery.refetch()} />
         ) : responses.length === 0 ? (
           <EmptyState
             icon={<MessageSquare className="size-8" />}

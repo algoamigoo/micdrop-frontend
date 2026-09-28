@@ -24,7 +24,7 @@ export function PromptForm({
   };
 
   return (
-    <div className="rounded-lg border border-border bg-card p-4">
+    <div className="border-border bg-card rounded-lg border p-4">
       <Textarea
         value={body}
         onChange={(e) => setBody(e.target.value)}

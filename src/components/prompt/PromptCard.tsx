@@ -8,7 +8,7 @@ import type { Prompt } from "@/types/domain";
 
 export function PromptCard({ prompt }: { prompt: Prompt }) {
   return (
-    <article className="group rounded-lg border border-border bg-card p-4 transition-colors hover:border-foreground/20">
+    <article className="group border-border bg-card hover:border-foreground/20 rounded-lg border p-4 transition-colors">
       <div className="flex gap-3 sm:gap-4">
         <div className="pt-0.5">
           <VoteControl
@@ -20,9 +20,9 @@ export function PromptCard({ prompt }: { prompt: Prompt }) {
         </div>
 
         <div className="min-w-0 flex-1">
-          <div className="mb-2 flex items-center gap-2 text-xs text-muted-foreground">
+          <div className="text-muted-foreground mb-2 flex items-center gap-2 text-xs">
             <Avatar userId={prompt.user_id} size={18} />
-            <span className="font-medium text-foreground">u/{prompt.user_id}</span>
+            <span className="text-foreground font-medium">u/{prompt.user_id}</span>
             <span aria-hidden>·</span>
             <time dateTime={prompt.created_at} title={absoluteTime(prompt.created_at)}>
               {timeAgo(prompt.created_at)}
@@ -30,7 +30,7 @@ export function PromptCard({ prompt }: { prompt: Prompt }) {
           </div>
 
           <Link to={`/p/${prompt.post_id}`} className="block">
-            <h3 className="text-base font-medium leading-snug text-foreground hover:text-primary sm:text-lg">
+            <h3 className="text-foreground hover:text-primary text-base leading-snug font-medium sm:text-lg">
               {prompt.body}
             </h3>
           </Link>

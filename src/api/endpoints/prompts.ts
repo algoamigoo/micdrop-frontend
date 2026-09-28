@@ -16,6 +16,6 @@ export function getPrompt(postId: number) {
   return unwrap<Prompt>(api.get(`/prompts/${postId}`));
 }
 
-export function createPrompt(input: { user_id: string; body: string }) {
+export function createPrompt(input: { body: string }) {
   return unwrap<Prompt>(api.post("/prompts", input));
 }

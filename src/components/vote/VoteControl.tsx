@@ -3,7 +3,7 @@ import { toast } from "sonner";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { isConflict } from "@/api/errors";
 import { votePrompt, voteResponse, type VoteType } from "@/api/endpoints/votes";
-import { useIdentity } from "@/features/identity/useIdentity";
+import { useAuth } from "@/features/auth/useAuth";
 import { useLocalVote, type VoteKind } from "@/features/votes/useLocalVote";
 import { patchPromptInCache, patchResponseInCache } from "@/features/votes/cache";
 import { promptKeys } from "@/features/prompts/keys";
@@ -28,17 +28,16 @@ export function VoteControl({
   authorId,
   orientation = "vertical",
 }: VoteControlProps) {
-  const { userId } = useIdentity();
+  const { user, isAuthenticated, login } = useAuth();
   const qc = useQueryClient();
+  const userId = user?.user_id ?? "";
   const [localVote, markVoted] = useLocalVote(userId, kind, id);
 
-  const isSelf = userId === authorId;
-  const locked = isSelf || localVote !== null;
+  const isSelf = isAuthenticated && user?.user_id === authorId;
+  const locked = isAuthenticated && (isSelf || localVote !== null);
 
-  // ---- Prompt mutation ----
   const promptMutation = useMutation({
     mutationFn: (vote: VoteType) => votePrompt(id, vote),
-
     onMutate: async (vote) => {
       await qc.cancelQueries({ queryKey: promptKeys.all });
       patchPromptInCache(qc, id, (p: Prompt) => ({
@@ -46,7 +45,6 @@ export function VoteControl({
         prompt_upvotes: p.prompt_upvotes + delta(vote),
       }));
     },
-
     onError: (err, vote) => {
       patchPromptInCache(qc, id, (p: Prompt) => ({
         ...p,
@@ -59,22 +57,18 @@ export function VoteControl({
         toast.error(err instanceof Error ? err.message : "Vote failed");
       }
     },
-
     onSuccess: (updated, vote) => {
       markVoted(vote);
       patchPromptInCache(qc, id, () => updated);
     },
-
     onSettled: () => {
       qc.invalidateQueries({ queryKey: promptKeys.lists() });
       qc.invalidateQueries({ queryKey: promptKeys.detail(id) });
     },
   });
 
-  // ---- Response mutation ----
   const responseMutation = useMutation({
     mutationFn: (vote: VoteType) => voteResponse(id, vote),
-
     onMutate: async (vote) => {
       await qc.cancelQueries({ queryKey: responseKeys.all });
       patchResponseInCache(qc, id, (r: Response) => ({
@@ -82,7 +76,6 @@ export function VoteControl({
         response_upvotes: r.response_upvotes + delta(vote),
       }));
     },
-
     onError: (err, vote) => {
       patchResponseInCache(qc, id, (r: Response) => ({
         ...r,
@@ -95,33 +88,37 @@ export function VoteControl({
         toast.error(err instanceof Error ? err.message : "Vote failed");
       }
     },
-
     onSuccess: (updated, vote) => {
       markVoted(vote);
       patchResponseInCache(qc, id, () => updated);
     },
-
     onSettled: () => {
       qc.invalidateQueries({ queryKey: responseKeys.lists() });
     },
   });
 
-  // Pick whichever is relevant for this instance
   const pending = kind === "prompt" ? promptMutation.isPending : responseMutation.isPending;
-  const pendingVote =
-    kind === "prompt" ? promptMutation.variables : responseMutation.variables;
+  const pendingVote = kind === "prompt" ? promptMutation.variables : responseMutation.variables;
 
   const handle = (vote: VoteType) => {
+    if (!isAuthenticated) {
+      toast.info("Sign in to vote", {
+        action: { label: "Sign in", onClick: login },
+      });
+      return;
+    }
     if (locked || pending) return;
     if (kind === "prompt") promptMutation.mutate(vote);
     else responseMutation.mutate(vote);
   };
 
-  const disabledReason = isSelf
-    ? "You can't vote on your own post"
-    : localVote
-      ? `You ${localVote}d this`
-      : undefined;
+  const disabledReason = !isAuthenticated
+    ? "Sign in to vote"
+    : isSelf
+      ? "You can't vote on your own post"
+      : localVote
+        ? `You ${localVote}d this`
+        : undefined;
 
   return (
     <div
@@ -133,7 +130,7 @@ export function VoteControl({
       <VoteButton
         direction="up"
         active={localVote === "upvote" || pendingVote === "upvote"}
-        disabled={locked}
+        disabled={isAuthenticated && locked}
         onClick={() => handle("upvote")}
         title={disabledReason}
       />
@@ -150,7 +147,7 @@ export function VoteControl({
       <VoteButton
         direction="down"
         active={localVote === "downvote" || pendingVote === "downvote"}
-        disabled={locked}
+        disabled={isAuthenticated && locked}
         onClick={() => handle("downvote")}
         title={disabledReason}
       />

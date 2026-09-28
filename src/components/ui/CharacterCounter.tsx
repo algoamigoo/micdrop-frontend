@@ -9,7 +9,7 @@ export function CharacterCounter({ length }: { length: number }) {
   return (
     <span
       className={cn(
-        "text-xs tabular-nums text-muted-foreground",
+        "text-muted-foreground text-xs tabular-nums",
         warn && !over && "text-amber-500",
         over && "text-destructive",
       )}

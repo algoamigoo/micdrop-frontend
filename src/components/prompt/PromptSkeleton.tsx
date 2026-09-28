@@ -2,7 +2,7 @@ import { Skeleton } from "@/components/ui/Skeleton";
 
 export function PromptSkeleton() {
   return (
-    <div className="rounded-lg border border-border bg-card p-4">
+    <div className="border-border bg-card rounded-lg border p-4">
       <div className="flex gap-4">
         <div className="flex flex-col items-center gap-2">
           <Skeleton className="size-8 rounded-md" />

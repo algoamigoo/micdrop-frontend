@@ -22,15 +22,15 @@ export function useVotePrompt() {
     },
 
     onError: (err, vars) => {
-    patchPromptInCache(qc, vars.id, (p) => ({
+      patchPromptInCache(qc, vars.id, (p) => ({
         ...p,
         prompt_upvotes: p.prompt_upvotes - delta(vars.vote),
-    }));
-    if (isConflict(err)) {
+      }));
+      if (isConflict(err)) {
         toast.error("You've already voted on this prompt.");
-    } else {
+      } else {
         toast.error(err instanceof Error ? err.message : "Vote failed");
-    }
+      }
     },
 
     onSuccess: (updated: Prompt) => {
@@ -61,15 +61,15 @@ export function useVoteResponse() {
     },
 
     onError: (err, vars) => {
-    patchResponseInCache(qc, vars.id, (r) => ({
+      patchResponseInCache(qc, vars.id, (r) => ({
         ...r,
         response_upvotes: r.response_upvotes - delta(vars.vote),
-    }));
-    if (isConflict(err)) {
+      }));
+      if (isConflict(err)) {
         toast.error("You've already voted on this response.");
-    } else {
+      } else {
         toast.error(err instanceof Error ? err.message : "Vote failed");
-    }
+      }
     },
 
     onSuccess: (updated: Response) => {
