@@ -95,7 +95,13 @@ export default function PromptDetailPage() {
           <div className="min-w-0 flex-1">
             <div className="text-muted-foreground mb-2 flex flex-wrap items-center gap-2 text-xs">
               <Avatar userId={prompt.user_id} size={18} />
-              <span className="text-foreground font-medium">u/{prompt.user_id}</span>
+              <Link
+                to={`/u/${encodeURIComponent(prompt.user_id)}`}
+                onClick={(e) => e.stopPropagation()}
+                className="text-foreground font-medium hover:underline"
+              >
+                u/{prompt.user_id}
+              </Link>
               <span aria-hidden>·</span>
               <time dateTime={prompt.created_at} title={absoluteTime(prompt.created_at)}>
                 {timeAgo(prompt.created_at)}

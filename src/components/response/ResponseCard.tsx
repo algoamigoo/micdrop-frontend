@@ -1,4 +1,5 @@
 import { Avatar } from "@/components/ui/Avatar";
+import { Link } from "react-router-dom";
 import { VoteControl } from "@/components/vote/VoteControl";
 import { absoluteTime, timeAgo } from "@/lib/format";
 import type { Response } from "@/types/domain";
@@ -19,7 +20,13 @@ export function ResponseCard({ response }: { response: Response }) {
         <div className="min-w-0 flex-1">
           <div className="text-muted-foreground mb-2 flex items-center gap-2 text-xs">
             <Avatar userId={response.user_id} size={18} />
-            <span className="text-foreground font-medium">u/{response.user_id}</span>
+            <Link
+              to={`/u/${encodeURIComponent(response.user_id)}`}
+              onClick={(e) => e.stopPropagation()}
+              className="text-foreground font-medium hover:underline"
+            >
+              u/{response.user_id}
+            </Link>
             <span aria-hidden>·</span>
             <time dateTime={response.created_at} title={absoluteTime(response.created_at)}>
               {timeAgo(response.created_at)}

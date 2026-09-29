@@ -4,6 +4,7 @@ import { Textarea } from "@/components/ui/Textarea";
 import { CharacterCounter } from "@/components/ui/CharacterCounter";
 import { Spinner } from "@/components/ui/Spinner";
 import { Avatar } from "@/components/ui/Avatar";
+import { Link } from "react-router-dom";
 import { useAuth } from "@/features/auth/useAuth";
 import { BODY_MAX } from "@/lib/constants";
 
@@ -41,7 +42,13 @@ export function ResponseForm({
       <div className="text-muted-foreground mb-3 flex items-center gap-2 text-sm">
         <Avatar userId={user.user_id} size={22} />
         <span>
-          Punching as <span className="text-foreground font-medium">u/{user.user_id}</span>
+          Punching as{" "}
+          <Link
+            to={`/u/${encodeURIComponent(user.user_id)}`}
+            className="text-foreground font-medium hover:underline"
+          >
+            u/{user.user_id}
+          </Link>
         </span>
       </div>
       <Textarea
