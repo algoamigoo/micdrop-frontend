@@ -1,73 +1,44 @@
-# React + TypeScript + Vite
+# MicDrop — Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React + TypeScript + Vite SPA for MicDrop. Feed, prompt detail, user profiles,
+Google OAuth sign-in, and server-driven voting.
 
-Currently, two official plugins are available:
+- Data: TanStack Query (`staleTime` 30s) over an axios client (`VITE_API_URL`)
+- Auth: token + user in `localStorage`, Google OAuth via backend redirects
+- Voting: one `useVote` hook, optimistic counter + `viewer_vote` patch with
+  snapshot rollback; all queries refetch on session change
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Architecture notes: [`docs/architecture.md`](docs/architecture.md).
+Backend API contract: `../micdrop/docs/ApiContract.md`.
 
-## React Compiler
+## Quickstart
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Prerequisites: Node 20+, backend running on `http://localhost:3000` (or set `VITE_API_URL`).
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(["dist"]),
-  {
-    files: ["**/*.{ts,tsx}"],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
+```bash
+npm install
+npm run dev      # http://localhost:5173
 ```
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+Scripts: `dev`, `build` (`tsc -b && vite build`), `lint`, `preview`.
 
-```js
-// eslint.config.js
-import reactX from "eslint-plugin-react-x";
-import reactDom from "eslint-plugin-react-dom";
+## Routes
 
-export default defineConfig([
-  globalIgnores(["dist"]),
-  {
-    files: ["**/*.{ts,tsx}"],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs["recommended-typescript"],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
-```
+| Route | Page |
+|---|---|
+| `/` | Feed (`?sort=newest\|top`), inline prompt composer |
+| `/p/:postId` | Prompt detail + response composer + responses |
+| `/u/:username` | Profile (header/karma, prompts/responses tabs, editor) |
+| `/login`, `/signup` | OAuth entry points |
+| `/onboarding/username` | Username picker (new Google identities) |
+| `/auth/callback` | OAuth landing (`?token=` or `?onboarding=`) |
+
+## Conventions
+
+- Domain types live in `src/types/domain.ts` and mirror the API envelope
+  (`viewer_vote: "upvote" | "downvote" | null`).
+- Query keys are centralized per feature (`features/*/keys.ts`); vote cache
+  helpers in `features/votes/cache.ts` must sweep **all** key families that
+  render an item (feed, detail, profile) — see `docs/architecture.md`.
+- Auth state is a tiny external store (`features/auth/auth.ts`); `useAuth`
+  subscribes to it. Never cache `viewer_vote` outside React Query.
