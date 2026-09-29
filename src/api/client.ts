@@ -9,8 +9,12 @@ export const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-  const token = getToken();
-  if (token) config.headers.set("Authorization", `Bearer ${token}`);
+  // Don't clobber an explicitly provided Authorization header
+  // (the onboarding token on /auth/complete-signup).
+  if (!config.headers.get("Authorization")) {
+    const token = getToken();
+    if (token) config.headers.set("Authorization", `Bearer ${token}`);
+  }
   return config;
 });
 

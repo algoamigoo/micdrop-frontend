@@ -1,11 +1,11 @@
 import { useMemo, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { MessageSquarePlus } from "lucide-react";
-import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/layout/Container";
 import { EmptyState } from "@/components/feedback/EmptyState";
 import { ErrorState } from "@/components/feedback/ErrorState";
 import { LoadMoreButton } from "@/components/feedback/LoadMoreButton";
+import { InlinePromptComposer } from "@/components/prompt/InlinePromptComposer";
 import { PromptCard } from "@/components/prompt/PromptCard";
 import { PromptSkeleton } from "@/components/prompt/PromptSkeleton";
 import { PromptSortTabs } from "@/components/prompt/PromptSortTabs";
@@ -45,23 +45,19 @@ export default function HomePage() {
 
   return (
     <Container size="md">
-      <div className="mb-6 flex items-end justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Feed</h1>
-          <p className="text-muted-foreground mt-1 text-sm">
-            Setups from the crowd. Punchlines from the brave.
-          </p>
-        </div>
-        <Button asChild size="sm" className="hidden sm:inline-flex">
-          <Link to="/new">+ New prompt</Link>
-        </Button>
+      <div className="mb-6">
+        <h1 className="text-2xl font-semibold tracking-tight">Feed</h1>
+        <p className="text-muted-foreground mt-1 text-sm">
+          Setups from the crowd. Punchlines from the brave.
+        </p>
+      </div>
+
+      <div className="mb-4">
+        <InlinePromptComposer />
       </div>
 
       <div className="mb-4 flex items-center justify-between gap-3">
         <PromptSortTabs value={sort} onChange={setSort} />
-        <Button asChild size="sm" className="sm:hidden">
-          <Link to="/new">+ New</Link>
-        </Button>
       </div>
 
       {query.isPending ? (
@@ -77,11 +73,6 @@ export default function HomePage() {
           icon={<MessageSquarePlus className="size-8" />}
           title="No prompts yet"
           description="Be the first to drop a setup and let the crowd riff."
-          action={
-            <Button asChild>
-              <Link to="/new">Create the first prompt</Link>
-            </Button>
-          }
         />
       ) : (
         <>

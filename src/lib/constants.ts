@@ -4,6 +4,7 @@ export const BODY_WARN = 240;
 export const STORAGE_KEYS = {
   token: "micdrop:token",
   user: "micdrop:user",
+  onboardingToken: "micdrop:onboardingToken",
   localVotes: "micdrop:localVotes",
 } as const;
 

@@ -41,8 +41,7 @@ export function ResponseForm({
       <div className="text-muted-foreground mb-3 flex items-center gap-2 text-sm">
         <Avatar userId={user.user_id} size={22} />
         <span>
-          Punching as{" "}
-          <span className="text-foreground font-medium">u/{user.user_name || user.user_id}</span>
+          Punching as <span className="text-foreground font-medium">u/{user.user_id}</span>
         </span>
       </div>
       <Textarea

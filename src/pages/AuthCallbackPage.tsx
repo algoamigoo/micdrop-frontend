@@ -1,19 +1,30 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Container } from "@/components/layout/Container";
 import { Spinner } from "@/components/ui/Spinner";
 import { ErrorState } from "@/components/feedback/ErrorState";
 import { Button } from "@/components/ui/Button";
 import { getMe } from "@/api/endpoints/users";
-import { setAuth, setToken } from "@/features/auth/auth";
+import { clearAuth, setAuth, setToken } from "@/features/auth/auth";
+import { STORAGE_KEYS } from "@/lib/constants";
 
 export default function AuthCallbackPage() {
   const [params] = useSearchParams();
   const navigate = useNavigate();
   const [error, setError] = useState<Error | null>(null);
   const token = params.get("token");
+  const onboardingToken = params.get("onboarding");
 
   useEffect(() => {
+    // New Google identity: park the short-lived onboarding token and go
+    // pick a username. Any existing session is stale at this point.
+    if (onboardingToken) {
+      clearAuth();
+      sessionStorage.setItem(STORAGE_KEYS.onboardingToken, onboardingToken);
+      navigate("/onboarding/username", { replace: true });
+      return;
+    }
+
     if (!token) return; // render handles this case
 
     setToken(token);
@@ -27,18 +38,19 @@ export default function AuthCallbackPage() {
       })
       .catch((err) => {
         if (cancelled) return;
-        localStorage.removeItem("micdrop:token");
+        localStorage.removeItem(STORAGE_KEYS.token);
         setError(err instanceof Error ? err : new Error("Sign-in failed"));
       });
 
     return () => {
       cancelled = true;
     };
-  }, [token, navigate]);
+  }, [token, onboardingToken, navigate]);
 
   // Derived, not stored — no setState in the effect body.
   const displayError =
-    error ?? (!token ? new Error("No token in URL. Try signing in again.") : null);
+    error ??
+    (!token && !onboardingToken ? new Error("No token in URL. Try signing in again.") : null);
 
   if (displayError) {
     return (
@@ -46,7 +58,7 @@ export default function AuthCallbackPage() {
         <ErrorState title="Sign-in failed" error={displayError} />
         <div className="mt-6 flex justify-center">
           <Button asChild>
-            <a href="/">Back to home</a>
+            <Link to="/">Back to home</Link>
           </Button>
         </div>
       </Container>

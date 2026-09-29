@@ -1,53 +1,43 @@
-import { Link, NavLink } from "react-router-dom";
-import { Mic2 } from "lucide-react";
-import { Button } from "@/components/ui/Button";
+import { Link } from "react-router-dom";
+import { Mic } from "lucide-react";
 import { Container } from "./Container";
-import { LoginButton } from "@/features/auth/LoginButton";
 import { UserMenu } from "@/features/auth/UserMenu";
 import { useAuth } from "@/features/auth/useAuth";
-import { cn } from "@/lib/cn";
 
 export function Header() {
   const { isAuthenticated } = useAuth();
 
   return (
-    <header className="border-border bg-background/80 sticky top-0 z-40 border-b backdrop-blur">
-      <Container size="lg" className="flex h-14 items-center justify-between gap-4">
-        <div className="flex items-center gap-6">
-          <Link to="/" className="flex items-center gap-2 text-base font-semibold">
-            <Mic2 className="text-primary size-5" />
-            <span>MicDrop</span>
-          </Link>
-          <nav className="hidden items-center gap-1 text-sm sm:flex">
-            <NavItem to="/" label="Feed" end />
-            <NavItem to="/new" label="New" />
-          </nav>
-        </div>
+    <header className="border-border bg-card/80 sticky top-0 z-40 w-full border-b backdrop-blur">
+      <Container className="flex h-14 items-center justify-between gap-4">
+        <Link to="/" className="flex items-center gap-2 font-semibold">
+          <span className="bg-primary text-primary-foreground flex size-7 items-center justify-center rounded-md">
+            <Mic className="size-4" />
+          </span>
+          <span className="text-base tracking-tight">MicDrop</span>
+        </Link>
 
-        <div className="flex items-center gap-2">
-          <Button asChild size="sm" variant="outline" className="hidden sm:inline-flex">
-            <Link to="/new">+ New prompt</Link>
-          </Button>
-          {isAuthenticated ? <UserMenu /> : <LoginButton />}
+        <div className="flex items-center gap-4">
+          {isAuthenticated ? (
+            <UserMenu />
+          ) : (
+            <nav className="flex items-center gap-4 text-sm">
+              <Link
+                to="/signup"
+                className="text-muted-foreground hover:text-foreground font-medium"
+              >
+                Sign up
+              </Link>
+              <Link
+                to="/login"
+                className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-md px-3 py-1.5 font-medium"
+              >
+                Sign in
+              </Link>
+            </nav>
+          )}
         </div>
       </Container>
     </header>
-  );
-}
-
-function NavItem({ to, label, end }: { to: string; label: string; end?: boolean }) {
-  return (
-    <NavLink
-      to={to}
-      end={end}
-      className={({ isActive }) =>
-        cn(
-          "text-muted-foreground hover:bg-muted hover:text-foreground rounded-md px-3 py-1.5 transition-colors",
-          isActive && "bg-muted text-foreground",
-        )
-      }
-    >
-      {label}
-    </NavLink>
   );
 }

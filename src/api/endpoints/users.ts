@@ -1,14 +1,14 @@
 import { api } from "../client";
 import { unwrap } from "../envelope";
-import type { Prompt, Response, User } from "@/types/domain";
+import type { Prompt, Response, UpdateProfileInput, User, UserProfileResponse } from "@/types/domain";
 
 export function getMe() {
   return unwrap<User>(api.get("/auth/me"));
 }
 
-/** Public — kept for fallback/testing. */
-export function getUser(userId: string) {
-  return unwrap<User>(api.get(`/users/${encodeURIComponent(userId)}`));
+/** Public — full profile (user + stats) for a username. */
+export function getUserProfile(userId: string) {
+  return unwrap<UserProfileResponse>(api.get(`/users/${encodeURIComponent(userId)}`));
 }
 
 export function listUserPrompts(userId: string, params: { limit?: number; offset?: number } = {}) {
@@ -26,4 +26,9 @@ export function listUserResponses(
   return unwrap<Response[]>(
     api.get(`/users/${encodeURIComponent(userId)}/responses`, { params: { limit, offset } }),
   );
+}
+
+/** Update the signed-in user's display name / bio / links. */
+export function updateMe(input: UpdateProfileInput) {
+  return unwrap<User>(api.patch("/users/me", input));
 }
