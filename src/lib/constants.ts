@@ -5,7 +5,6 @@ export const STORAGE_KEYS = {
   token: "micdrop:token",
   user: "micdrop:user",
   onboardingToken: "micdrop:onboardingToken",
-  localVotes: "micdrop:localVotes",
 } as const;
 
 export const PAGE_SIZE = {

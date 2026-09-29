@@ -15,6 +15,7 @@ export interface Prompt {
   body: string;
   prompt_upvotes: number;
   response_count: number;
+  viewer_vote: "upvote" | "downvote" | null;
   created_at: string;
   updated_at: string;
 }
@@ -25,6 +26,7 @@ export interface Response {
   user_id: string;
   body: string;
   response_upvotes: number;
+  viewer_vote: "upvote" | "downvote" | null;
   created_at: string;
   updated_at: string;
 }

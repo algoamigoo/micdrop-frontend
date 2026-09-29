@@ -38,12 +38,17 @@ export interface UpdateProfileInput {
   links?: Link[];
 }
 
+export type ViewerVote = "upvote" | "downvote" | null;
+export type VoteValue = "upvote" | "downvote" | "none";
+export type VoteDirection = "upvote" | "downvote";
+
 export interface Prompt {
   post_id: number;
   user_id: string;
   body: string;
   prompt_upvotes: number;
   response_count: number;
+  viewer_vote: ViewerVote;
   created_at: string;
   updated_at: string;
 }
@@ -54,6 +59,7 @@ export interface Response {
   user_id: string;
   body: string;
   response_upvotes: number;
+  viewer_vote: ViewerVote;
   created_at: string;
   updated_at: string;
 }
