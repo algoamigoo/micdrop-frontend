@@ -15,7 +15,7 @@ export function PromptCard({ prompt }: { prompt: Prompt }) {
             kind="prompt"
             id={prompt.post_id}
             score={prompt.prompt_upvotes}
-            authorId={prompt.user_id}
+            viewerVote={prompt.viewer_vote ?? null}
           />
         </div>
 

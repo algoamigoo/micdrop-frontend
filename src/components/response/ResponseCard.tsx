@@ -13,7 +13,7 @@ export function ResponseCard({ response }: { response: Response }) {
             kind="response"
             id={response.response_id}
             score={response.response_upvotes}
-            authorId={response.user_id}
+            viewerVote={response.viewer_vote ?? null}
           />
         </div>
 

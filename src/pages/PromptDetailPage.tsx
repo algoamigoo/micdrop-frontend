@@ -89,7 +89,7 @@ export default function PromptDetailPage() {
               kind="prompt"
               id={prompt.post_id}
               score={prompt.prompt_upvotes}
-              authorId={prompt.user_id}
+              viewerVote={prompt.viewer_vote ?? null}
             />
           </div>
           <div className="min-w-0 flex-1">
