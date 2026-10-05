@@ -3,6 +3,7 @@ import { Providers } from "./app/providers";
 import { AppShell } from "./components/layout/AppShell";
 import HomePage from "./pages/HomePage";
 import PromptDetailPage from "./pages/PromptDetailPage";
+import { FollowListPage } from "./components/profile/FollowListPage";
 import ProfilePage from "./pages/ProfilePage";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
@@ -24,6 +25,8 @@ export default function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/p/:postId" element={<PromptDetailPage />} />
             <Route path="/u/:username" element={<ProfilePage />} />
+            <Route path="/u/:username/followers" element={<FollowListPage kind="followers" />} />
+            <Route path="/u/:username/following" element={<FollowListPage kind="following" />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/onboarding/username" element={<OnboardingUsernamePage />} />

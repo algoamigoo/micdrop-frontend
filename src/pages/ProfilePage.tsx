@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useParams, useSearchParams } from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import { MessageSquare, MessageSquarePlus, PenLine } from "lucide-react";
 import { Container } from "@/components/layout/Container";
 import { Avatar } from "@/components/ui/Avatar";
@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/feedback/EmptyState";
 import { ErrorState } from "@/components/feedback/ErrorState";
 import { LoadMoreButton } from "@/components/feedback/LoadMoreButton";
+import { FollowButton } from "@/components/profile/FollowButton";
 import { ProfileEditor } from "@/components/profile/ProfileEditor";
 import { UserLink } from "@/components/profile/UserLink";
 import { PromptCard } from "@/components/prompt/PromptCard";
@@ -86,7 +87,7 @@ export default function ProfilePage() {
     );
   }
 
-  const { user, stats } = profileQuery.data;
+  const { user, stats, follows } = profileQuery.data;
   const isOwnProfile = !!me && me.user_id === user.user_id;
 
   // URL-driven editor (?edit=1) so the user menu can deep-link here.
@@ -128,11 +129,16 @@ export default function ProfilePage() {
                   u/{user.user_id} · joined {joinedLabel(user.created_at)}
                 </p>
               </div>
-              {isOwnProfile && (
+              {isOwnProfile ? (
                 <Button variant="outline" size="sm" onClick={openEditor}>
                   <PenLine className="size-4" />
                   Edit profile
                 </Button>
+              ) : (
+                <FollowButton
+                  userId={user.user_id}
+                  isFollowing={profileQuery.data.follows.is_following}
+                />
               )}
             </div>
 
@@ -167,6 +173,20 @@ export default function ProfilePage() {
                 </p>
                 <p className="text-muted-foreground text-xs">Responses</p>
               </button>
+              <Link
+                to={`/u/${encodeURIComponent(user.user_id)}/followers`}
+                className="hover:text-primary"
+              >
+                <p className="text-base font-semibold">{formatCount(follows.followers_count)}</p>
+                <p className="text-muted-foreground text-xs">Followers</p>
+              </Link>
+              <Link
+                to={`/u/${encodeURIComponent(user.user_id)}/following`}
+                className="hover:text-primary"
+              >
+                <p className="text-base font-semibold">{formatCount(follows.following_count)}</p>
+                <p className="text-muted-foreground text-xs">Following</p>
+              </Link>
             </div>
           </div>
         </div>
@@ -183,7 +203,7 @@ export default function ProfilePage() {
               "-mb-px border-b-2 px-3 py-2 text-sm font-medium capitalize transition-colors",
               tab === t
                 ? "border-primary text-foreground"
-                : "text-muted-foreground border-transparent hover:text-foreground",
+                : "text-muted-foreground hover:text-foreground border-transparent",
             )}
           >
             {t}

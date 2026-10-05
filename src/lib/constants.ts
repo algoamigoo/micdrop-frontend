@@ -19,4 +19,5 @@ export const PAGE_MAX = {
   promptResponses: 100,
   userPrompts: 50,
   userResponses: 50,
+  userFollowers: 100,
 } as const;

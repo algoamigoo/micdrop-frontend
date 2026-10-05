@@ -22,9 +22,16 @@ export interface UserStats {
   response_count: number;
 }
 
+export interface FollowCounts {
+  followers_count: number;
+  following_count: number;
+  is_following: boolean;
+}
+
 export interface UserProfileResponse {
   user: User;
   stats: UserStats;
+  follows: FollowCounts;
 }
 
 export interface CompleteSignupResponse {
