@@ -10,7 +10,8 @@ import { PromptCard } from "@/components/prompt/PromptCard";
 import { PromptSkeleton } from "@/components/prompt/PromptSkeleton";
 import { PromptSortTabs } from "@/components/prompt/PromptSortTabs";
 import { usePrompts } from "@/features/prompts/queries";
-import { PAGE_SIZE } from "@/lib/constants";
+import { PAGE_MAX, PAGE_SIZE } from "@/lib/constants";
+import { hasMorePages, nextLimit } from "@/lib/pagination";
 import type { PromptSort } from "@/types/domain";
 
 const VALID_SORTS: PromptSort[] = ["newest", "top"];
@@ -34,7 +35,7 @@ export default function HomePage() {
   const query = usePrompts({ sort, limit, offset: 0 });
 
   const prompts = useMemo(() => query.data ?? [], [query.data]);
-  const hasMore = prompts.length === limit;
+  const hasMore = hasMorePages(prompts.length, limit, PAGE_MAX.feed);
 
   const setSort = (next: PromptSort) => {
     const nextParams = new URLSearchParams(params);
@@ -85,7 +86,10 @@ export default function HomePage() {
             loading={query.isFetching}
             hasMore={hasMore}
             onClick={() =>
-              setLimits((prev) => ({ ...prev, [sort]: prev[sort] + PAGE_SIZE.prompts }))
+              setLimits((prev) => ({
+                ...prev,
+                [sort]: nextLimit(prev[sort], PAGE_SIZE.prompts, PAGE_MAX.feed),
+              }))
             }
           />
         </>

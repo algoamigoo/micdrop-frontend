@@ -15,7 +15,8 @@ import { ResponseSkeleton } from "@/components/response/ResponseSkeleton";
 import { usePrompt } from "@/features/prompts/queries";
 import { useResponses } from "@/features/responses/queries";
 import { useCreateResponse } from "@/features/responses/mutations";
-import { PAGE_SIZE } from "@/lib/constants";
+import { PAGE_MAX, PAGE_SIZE } from "@/lib/constants";
+import { hasMorePages, nextLimit } from "@/lib/pagination";
 import { absoluteTime, formatCount, timeAgo } from "@/lib/format";
 import { isNotFound } from "@/api/errors";
 
@@ -33,7 +34,7 @@ export default function PromptDetailPage() {
   const createResponse = useCreateResponse(postId);
 
   const responses = responsesQuery.data ?? [];
-  const hasMore = responses.length === limit;
+  const hasMore = hasMorePages(responses.length, limit, PAGE_MAX.promptResponses);
 
   // Invalid route param
   if (!Number.isFinite(postId)) {
@@ -151,7 +152,7 @@ export default function PromptDetailPage() {
       <LoadMoreButton
         loading={responsesQuery.isFetching}
         hasMore={hasMore && responses.length > 0}
-        onClick={() => setLimit((l) => l + PAGE_SIZE.responses)}
+        onClick={() => setLimit((l) => nextLimit(l, PAGE_SIZE.responses, PAGE_MAX.promptResponses))}
       />
     </Container>
   );

@@ -16,7 +16,8 @@ import { ResponseSkeleton } from "@/components/response/ResponseSkeleton";
 import { useAuth } from "@/features/auth/useAuth";
 import { useUserPrompts, useUserProfile, useUserResponses } from "@/features/profile/queries";
 import { isNotFound } from "@/api/errors";
-import { PAGE_SIZE } from "@/lib/constants";
+import { PAGE_MAX, PAGE_SIZE } from "@/lib/constants";
+import { hasMorePages, nextLimit } from "@/lib/pagination";
 import { formatCount } from "@/lib/format";
 import { cn } from "@/lib/cn";
 
@@ -223,9 +224,12 @@ export default function ProfilePage() {
             </div>
             <LoadMoreButton
               loading={promptsQuery.isFetching}
-              hasMore={prompts.length === limits.prompts}
+              hasMore={hasMorePages(prompts.length, limits.prompts, PAGE_MAX.userPrompts)}
               onClick={() =>
-                setLimits((prev) => ({ ...prev, prompts: prev.prompts + PAGE_SIZE.prompts }))
+                setLimits((prev) => ({
+                  ...prev,
+                  prompts: nextLimit(prev.prompts, PAGE_SIZE.prompts, PAGE_MAX.userPrompts),
+                }))
               }
             />
           </>
@@ -261,9 +265,12 @@ export default function ProfilePage() {
           </div>
           <LoadMoreButton
             loading={responsesQuery.isFetching}
-            hasMore={responses.length === limits.responses}
+            hasMore={hasMorePages(responses.length, limits.responses, PAGE_MAX.userResponses)}
             onClick={() =>
-              setLimits((prev) => ({ ...prev, responses: prev.responses + PAGE_SIZE.responses }))
+              setLimits((prev) => ({
+                ...prev,
+                responses: nextLimit(prev.responses, PAGE_SIZE.responses, PAGE_MAX.userResponses),
+              }))
             }
           />
         </>

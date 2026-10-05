@@ -11,3 +11,12 @@ export const PAGE_SIZE = {
   prompts: 10,
   responses: 20,
 } as const;
+
+// Per-endpoint server caps. The API returns 400 for a limit above these, so
+// "load more" has to stop here.
+export const PAGE_MAX = {
+  feed: 50,
+  promptResponses: 100,
+  userPrompts: 50,
+  userResponses: 50,
+} as const;
