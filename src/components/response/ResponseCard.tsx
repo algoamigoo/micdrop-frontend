@@ -1,4 +1,5 @@
 import { Avatar } from "@/components/ui/Avatar";
+import { OwnerActions } from "@/components/content/OwnerActions";
 import { Link } from "react-router-dom";
 import { VoteControl } from "@/components/vote/VoteControl";
 import { absoluteTime, timeAgo } from "@/lib/format";
@@ -6,7 +7,7 @@ import type { Response } from "@/types/domain";
 
 export function ResponseCard({ response }: { response: Response }) {
   return (
-    <article className="border-border bg-card rounded-lg border p-4">
+    <article className="border-border bg-card group rounded-lg border p-4">
       <div className="flex gap-3 sm:gap-4">
         <div className="pt-0.5">
           <VoteControl
@@ -33,6 +34,15 @@ export function ResponseCard({ response }: { response: Response }) {
             </time>
           </div>
           <p className="text-foreground text-[15px] leading-snug">{response.body}</p>
+          {response.edited && <p className="text-muted-foreground mt-1 text-xs">(edited)</p>}
+
+          <OwnerActions
+            kind="response"
+            id={response.response_id}
+            postId={response.post_id}
+            authorId={response.user_id}
+            body={response.body}
+          />
         </div>
       </div>
     </article>

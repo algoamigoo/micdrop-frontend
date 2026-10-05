@@ -19,3 +19,11 @@ export function getPrompt(postId: number) {
 export function createPrompt(input: { body: string }) {
   return unwrap<Prompt>(api.post("/prompts", input));
 }
+
+export function updatePrompt(postId: number, input: { body: string }) {
+  return unwrap<Prompt>(api.patch(`/prompts/${postId}`, input));
+}
+
+export function deletePrompt(postId: number) {
+  return api.delete(`/prompts/${postId}`).then(() => undefined);
+}

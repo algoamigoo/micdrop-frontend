@@ -49,6 +49,7 @@ export interface Prompt {
   prompt_upvotes: number;
   response_count: number;
   viewer_vote: ViewerVote;
+  edited: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -60,6 +61,7 @@ export interface Response {
   body: string;
   response_upvotes: number;
   viewer_vote: ViewerVote;
+  edited: boolean;
   created_at: string;
   updated_at: string;
 }

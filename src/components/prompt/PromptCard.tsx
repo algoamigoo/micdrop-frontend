@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { MessageSquare } from "lucide-react";
+import { OwnerActions } from "@/components/content/OwnerActions";
 import { Avatar } from "@/components/ui/Avatar";
 import { Badge } from "@/components/ui/Badge";
 import { VoteControl } from "@/components/vote/VoteControl";
@@ -41,6 +42,10 @@ export function PromptCard({ prompt }: { prompt: Prompt }) {
             </h3>
           </Link>
 
+          {prompt.edited && (
+            <p className="text-muted-foreground mt-1 text-xs">(edited)</p>
+          )}
+
           <div className="mt-3 flex items-center gap-2">
             <Badge>
               <MessageSquare className="size-3" />
@@ -48,6 +53,13 @@ export function PromptCard({ prompt }: { prompt: Prompt }) {
               {prompt.response_count === 1 ? "response" : "responses"}
             </Badge>
           </div>
+
+          <OwnerActions
+            kind="prompt"
+            id={prompt.post_id}
+            authorId={prompt.user_id}
+            body={prompt.body}
+          />
         </div>
       </div>
     </article>

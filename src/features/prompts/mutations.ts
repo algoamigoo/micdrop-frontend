@@ -28,6 +28,7 @@ export function useCreatePrompt() {
         prompt_upvotes: 1,
         viewer_vote: "upvote",
         response_count: 0,
+        edited: false,
         created_at: now,
         updated_at: now,
       });
