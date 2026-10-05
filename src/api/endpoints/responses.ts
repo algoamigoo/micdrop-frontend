@@ -17,3 +17,11 @@ export function listResponses(
 export function createResponse(postId: number, input: { body: string }) {
   return unwrap<Response>(api.post(`/prompts/${postId}/responses`, input));
 }
+
+export function updateResponse(responseId: number, input: { body: string }) {
+  return unwrap<Response>(api.patch(`/responses/${responseId}`, input));
+}
+
+export function deleteResponse(responseId: number) {
+  return api.delete(`/responses/${responseId}`).then(() => undefined);
+}

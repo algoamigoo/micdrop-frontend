@@ -1,6 +1,12 @@
 import { api } from "../client";
 import { unwrap } from "../envelope";
-import type { Prompt, Response, UpdateProfileInput, User, UserProfileResponse } from "@/types/domain";
+import type {
+  Prompt,
+  Response,
+  UpdateProfileInput,
+  User,
+  UserProfileResponse,
+} from "@/types/domain";
 
 export function getMe() {
   return unwrap<User>(api.get("/auth/me"));
@@ -28,7 +34,32 @@ export function listUserResponses(
   );
 }
 
+/** Public — the users following this username. */
+export function listFollowers(userId: string, params: { limit?: number; offset?: number } = {}) {
+  const { limit = 20, offset = 0 } = params;
+  return unwrap<User[]>(
+    api.get(`/users/${encodeURIComponent(userId)}/followers`, { params: { limit, offset } }),
+  );
+}
+
+/** Public — the users this username follows. */
+export function listFollowing(userId: string, params: { limit?: number; offset?: number } = {}) {
+  const { limit = 20, offset = 0 } = params;
+  return unwrap<User[]>(
+    api.get(`/users/${encodeURIComponent(userId)}/following`, { params: { limit, offset } }),
+  );
+}
+
 /** Update the signed-in user's display name / bio / links. */
 export function updateMe(input: UpdateProfileInput) {
   return unwrap<User>(api.patch("/users/me", input));
+}
+/** Idempotent: following twice is a no-op. */
+export function followUser(userId: string) {
+  return api.put(`/users/${encodeURIComponent(userId)}/follow`).then(() => undefined);
+}
+
+/** Idempotent: unfollowing someone you don't follow still succeeds. */
+export function unfollowUser(userId: string) {
+  return api.delete(`/users/${encodeURIComponent(userId)}/follow`).then(() => undefined);
 }
